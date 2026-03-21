@@ -1,0 +1,585 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Catallaxy Services | Now You Have Two Problems</title>
+
+		<link rel="stylesheet" href="../reveal.js/dist/reset.css">
+		<link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="../reveal.js/dist/theme/black.css" id="theme">
+		<link rel="stylesheet" href="../WebsiteAssets/mods.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css" id="highlight-theme">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h2>Now You Have Two Problems</h2>
+					<h3>An Introduction to Regular Expressions in SQL Server 2025</h3>
+
+					<a href="https://www.catallaxyservices.com">Kevin Feasel</a> (<a href="https://twitter.com/feaselkl">@feaselkl</a>)<br />
+					<a href="https://csmore.info/on/regex">https://csmore.info/on/regex</a>
+				</section>
+
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Who Am I?  What Am I Doing Here?</h3>
+					<div class="container">
+						<div class="col">
+							<table class="whoami">
+								<tr>
+									<td><a href="https://csmore.info"><img src="../WebsiteAssets/Logo.png" height="100" /></a></td>
+									<td nowrap><a href="https://csmore.info">Catallaxy Services</a></td>
+								</tr>
+								<tr>
+									<td><a href="https://curatedsql.com"><img src="../WebsiteAssets/CuratedSQLLogo.png" height="100" /></a></td>
+									<td nowrap><a href="https://curatedsql.com">Curated SQL</a></td>
+								</tr>
+								<tr>
+									<td><a href="https://www.amazon.com/Finding-Ghosts-Your-Data-Techniques/dp/1484288696"><img src="../WebsiteAssets/Finding-Ghosts.jpg" height="120" /></a></td>
+									<td nowrap><a href="https://www.amazon.com/Finding-Ghosts-Your-Data-Techniques/dp/1484288696">Finding Ghosts in Your Data</a></td>
+								</tr>
+							</table>
+						</div>
+						<div class="col">
+							<a href="http://www.twitter.com/feaselkl"><img src="../WebsiteAssets/HeadShot.jpg" height="358" width="315" /></a>
+							<br />
+							<a href="http://www.twitter.com/feaselkl">@feaselkl</a>
+						</div>
+					</div>
+				</section>
+
+				<section data-background-image="presentation/assets/background/motivation.jpg" data-background-opacity="0.2">
+					<h3>Motivation</h3>
+
+					<p>SQL Server has historically had limited pattern matching capabilities, relying on <code>LIKE</code> and <code>PATINDEX()</code> for string matching.</p>
+
+					<p>SQL Server 2025 introduces native regular expression support, bringing SQL Server in line with other major database platforms like Oracle, PostgreSQL, and MySQL.</p>
+
+					<p>Regular expressions unlock powerful text processing capabilities that were previously difficult or impossible in T-SQL alone.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+
+					<ol>
+						<li class="active">What Are Regular Expressions?</li>
+						<li>Regex Fundamentals</li>
+						<li>REGEXP_LIKE</li>
+						<li>REGEXP_COUNT</li>
+						<li>REGEXP_REPLACE</li>
+						<li>REGEXP_SUBSTR</li>
+						<li>REGEXP_INSTR</li>
+						<li>Practical Examples</li>
+					</ol>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>What Are Regular Expressions?</h3>
+
+					<p>A <strong>regular expression</strong> (regex) is a sequence of characters that defines a search pattern.</p>
+
+					<p>Think of them as a super-powered version of the <code>LIKE</code> operator.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>The Famous Quote</h3>
+
+					<p><em>"Some people, when confronted with a problem, think 'I know, I'll use regular expressions.' Now they have two problems."</em></p>
+
+					<p>-- Jamie Zawinski</p>
+
+					<p>Let's see if that's still true.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>LIKE vs Regular Expressions</h3>
+
+					<p><code>LIKE</code> gives us two wildcards:</p>
+					<ul>
+						<li><code>%</code> -- Zero or more characters</li>
+						<li><code>_</code> -- Exactly one character</li>
+					</ul>
+
+					<p>Regular expressions give us much more control over pattern matching, including character classes, quantifiers, alternation, grouping, anchors, and more.</p>
+
+					<p>Use <code>LIKE</code> when simple prefix/suffix/contains matching is enough -- it can use indexes and is faster for simple patterns.  Use regex when you need character classes, quantifiers, alternation, or complex pattern logic.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+
+					<ol>
+						<li>What Are Regular Expressions?</li>
+						<li class="active">Regex Fundamentals</li>
+						<li>REGEXP_LIKE</li>
+						<li>REGEXP_COUNT</li>
+						<li>REGEXP_REPLACE</li>
+						<li>REGEXP_SUBSTR</li>
+						<li>REGEXP_INSTR</li>
+						<li>Practical Examples</li>
+					</ol>
+				</section>
+
+				<section data-background-image="presentation/assets/background/blueprint.jpg" data-background-opacity="0.2">
+					<h3>Literal Characters</h3>
+
+					<p>The simplest regex pattern is a literal string.</p>
+
+					<p>The pattern <code>cat</code> matches the text "cat" inside a string.  This is equivalent to <code>LIKE '%cat%'</code>.</p>
+
+					<p>Regular expressions are <strong>case-sensitive</strong> by default, though SQL Server's regex functions include a flag to change this.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/blueprint.jpg" data-background-opacity="0.2">
+					<h3>Character Classes</h3>
+
+					<p>Square brackets define a set of characters to match:</p>
+					<ul>
+						<li><code>[abc]</code> -- Matches a, b, or c</li>
+						<li><code>[a-z]</code> -- Matches any lowercase letter</li>
+						<li><code>[0-9]</code> -- Matches any digit</li>
+						<li><code>[^abc]</code> -- Matches any character <strong>except</strong> a, b, or c</li>
+					</ul>
+				</section>
+
+				<section data-background-image="presentation/assets/background/blueprint.jpg" data-background-opacity="0.2">
+					<h3>Shorthand Character Classes</h3>
+
+					<ul>
+						<li><code>\d</code> -- Any digit (equivalent to <code>[0-9]</code>)</li>
+						<li><code>\D</code> -- Any non-digit</li>
+						<li><code>\w</code> -- Any word character (letters, digits, underscore)</li>
+						<li><code>\W</code> -- Any non-word character</li>
+						<li><code>\s</code> -- Any whitespace character</li>
+						<li><code>\S</code> -- Any non-whitespace character</li>
+						<li><code>.</code> -- Any character (except newline by default)</li>
+					</ul>
+				</section>
+
+				<section data-background-image="presentation/assets/background/blueprint.jpg" data-background-opacity="0.2">
+					<h3>Quantifiers</h3>
+
+					<p>Quantifiers specify how many times a character or group should repeat:</p>
+					<ul>
+						<li><code>*</code> -- Zero or more times</li>
+						<li><code>+</code> -- One or more times</li>
+						<li><code>?</code> -- Zero or one time</li>
+						<li><code>{n}</code> -- Exactly n times</li>
+						<li><code>{n,}</code> -- n or more times</li>
+						<li><code>{n,m}</code> -- Between n and m times</li>
+					</ul>
+				</section>
+
+				<section data-background-image="presentation/assets/background/blueprint.jpg" data-background-opacity="0.2">
+					<h3>Greedy vs. Lazy Quantifiers</h3>
+
+					<p>By default, quantifiers are <strong>greedy</strong>: they match as much as possible.</p>
+
+					<p>Adding <code>?</code> after a quantifier makes it <strong>lazy</strong>: it matches as little as possible.</p>
+
+					<ul>
+						<li><code>&lt;.+&gt;</code> on <code>&lt;b&gt;bold&lt;/b&gt;</code> matches <code>&lt;b&gt;bold&lt;/b&gt;</code> (greedy: everything between the <em>first</em> <code>&lt;</code> and the <em>last</em> <code>&gt;</code>)</li>
+						<li><code>&lt;.+?&gt;</code> on the same string matches <code>&lt;b&gt;</code> (lazy: stops at the <em>first</em> <code>&gt;</code>)</li>
+					</ul>
+
+					<p>This is the #1 source of "my regex matches too much!" bugs.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/blueprint.jpg" data-background-opacity="0.2">
+					<h3>Anchors and Boundaries</h3>
+
+					<ul>
+						<li><code>^</code> -- Start of string</li>
+						<li><code>$</code> -- End of string</li>
+						<li><code>\b</code> -- Word boundary</li>
+					</ul>
+
+					<p>For example, <code>^[A-Z]</code> matches a string that <strong>starts</strong> with a capital letter, while <code>[0-9]$</code> matches a string that <strong>ends</strong> with a digit.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/blueprint.jpg" data-background-opacity="0.2">
+					<h3>Grouping and Alternation</h3>
+
+					<ul>
+						<li><code>(abc)</code> -- Captures the group "abc"</li>
+						<li><code>(?:abc)</code> -- Groups without capturing (non-capturing group)</li>
+						<li><code>a|b</code> -- Matches a or b (alternation)</li>
+						<li><code>(cat|dog)</code> -- Matches "cat" or "dog"</li>
+					</ul>
+
+					<p>Captured groups can be referenced in replacement patterns using <code>\1</code>, <code>\2</code>, etc.  Use <code>(?:...)</code> when you need grouping but don't need to capture.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/blueprint.jpg" data-background-opacity="0.2">
+					<h3>Escaping Special Characters</h3>
+
+					<p>If you want to match a character that has special meaning in regex, escape it with a backslash:</p>
+
+					<p><code>\.</code> matches a literal period, <code>\*</code> matches a literal asterisk, <code>\\</code> matches a literal backslash.</p>
+
+					<p>Special characters that need escaping: <code>. * + ? ^ $ { } [ ] ( ) | \</code></p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+
+					<ol>
+						<li>What Are Regular Expressions?</li>
+						<li>Regex Fundamentals</li>
+						<li class="active">REGEXP_LIKE</li>
+						<li>REGEXP_COUNT</li>
+						<li>REGEXP_REPLACE</li>
+						<li>REGEXP_SUBSTR</li>
+						<li>REGEXP_INSTR</li>
+						<li>Practical Examples</li>
+					</ol>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>REGEXP_LIKE</h3>
+
+					<p><code>REGEXP_LIKE</code> tests whether a string matches a regular expression pattern.  It returns 1 (match) or 0 (no match).</p>
+
+					<pre><code data-trim data-line-numbers>
+						REGEXP_LIKE(
+							source_string,
+							pattern
+							[, flags]
+						)
+					</code></pre>
+
+					<p>Think of this as a more powerful replacement for <code>LIKE</code> or <code>PATINDEX() &gt; 0</code>.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>REGEXP_LIKE Flags</h3>
+
+					<p>The optional <code>flags</code> parameter modifies matching behavior:</p>
+					<ul>
+						<li><code>'i'</code> -- Case-insensitive matching</li>
+						<li><code>'m'</code> -- Multi-line mode (<code>^</code> and <code>$</code> match line boundaries)</li>
+					</ul>
+
+					<p>These flags are common to all SQL Server 2025 regex functions.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+
+					<ol>
+						<li>What Are Regular Expressions?</li>
+						<li>Regex Fundamentals</li>
+						<li>REGEXP_LIKE</li>
+						<li class="active">REGEXP_COUNT</li>
+						<li>REGEXP_REPLACE</li>
+						<li>REGEXP_SUBSTR</li>
+						<li>REGEXP_INSTR</li>
+						<li>Practical Examples</li>
+					</ol>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>REGEXP_COUNT</h3>
+
+					<p><code>REGEXP_COUNT</code> returns the number of times a pattern matches within a string.</p>
+
+					<pre><code data-trim data-line-numbers>
+						REGEXP_COUNT(
+							source_string,
+							pattern
+							[, start_position
+							[, flags]]
+						)
+					</code></pre>
+
+					<p>This is useful for counting occurrences of a pattern, such as the number of words or digits in a string.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+
+					<ol>
+						<li>What Are Regular Expressions?</li>
+						<li>Regex Fundamentals</li>
+						<li>REGEXP_LIKE</li>
+						<li>REGEXP_COUNT</li>
+						<li class="active">REGEXP_REPLACE</li>
+						<li>REGEXP_SUBSTR</li>
+						<li>REGEXP_INSTR</li>
+						<li>Practical Examples</li>
+					</ol>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>REGEXP_REPLACE</h3>
+
+					<p><code>REGEXP_REPLACE</code> replaces occurrences of a pattern within a string.</p>
+
+					<pre><code data-trim data-line-numbers>
+						REGEXP_REPLACE(
+							source_string,
+							pattern,
+							replacement
+							[, start_position
+							[, occurrence
+							[, flags]]]
+						)
+					</code></pre>
+
+					<p>This is a major upgrade from <code>REPLACE()</code>, which only handles literal string replacement.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>Backreferences in Replacement</h3>
+
+					<p>Use captured groups in your replacement string:</p>
+					<ul>
+						<li><code>\1</code>, <code>\2</code>, etc. refer to captured groups</li>
+						<li>Allows you to rearrange, reformat, or selectively keep parts of the matched text</li>
+					</ul>
+
+					<p>For example, <code>(\d{3})-(\d{4})</code> with replacement <code>\2-\1</code> swaps the two groups.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>Lookaheads and Lookbehinds</h3>
+
+					<p>These check for patterns <strong>without consuming</strong> them:</p>
+					<ul>
+						<li><code>(?=...)</code> -- Positive lookahead: what follows must match</li>
+						<li><code>(?!...)</code> -- Negative lookahead: what follows must NOT match</li>
+						<li><code>(?&lt;=...)</code> -- Positive lookbehind: what precedes must match</li>
+						<li><code>(?&lt;!...)</code> -- Negative lookbehind: what precedes must NOT match</li>
+					</ul>
+
+					<p>We will demo the positive versions today.  Useful for redacting data, conditional replacements, and context-sensitive matching.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+
+					<ol>
+						<li>What Are Regular Expressions?</li>
+						<li>Regex Fundamentals</li>
+						<li>REGEXP_LIKE</li>
+						<li>REGEXP_COUNT</li>
+						<li>REGEXP_REPLACE</li>
+						<li class="active">REGEXP_SUBSTR</li>
+						<li>REGEXP_INSTR</li>
+						<li>Practical Examples</li>
+					</ol>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>REGEXP_SUBSTR</h3>
+
+					<p><code>REGEXP_SUBSTR</code> extracts a substring that matches a regular expression pattern.</p>
+
+					<pre><code data-trim data-line-numbers>
+						REGEXP_SUBSTR(
+							source_string,
+							pattern
+							[, start_position
+							[, occurrence
+							[, flags
+							[, group_number]]]]
+						)
+					</code></pre>
+
+					<p>This is especially useful for extracting structured data from unstructured text.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+
+					<ol>
+						<li>What Are Regular Expressions?</li>
+						<li>Regex Fundamentals</li>
+						<li>REGEXP_LIKE</li>
+						<li>REGEXP_COUNT</li>
+						<li>REGEXP_REPLACE</li>
+						<li>REGEXP_SUBSTR</li>
+						<li class="active">REGEXP_INSTR</li>
+						<li>Practical Examples</li>
+					</ol>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>REGEXP_INSTR</h3>
+
+					<p><code>REGEXP_INSTR</code> returns the starting position of a pattern match within a string.  Think of it as a regex-powered <code>PATINDEX()</code>.</p>
+
+					<pre><code data-trim data-line-numbers>
+						REGEXP_INSTR(
+							source_string,
+							pattern
+							[, start_position
+							[, occurrence
+							[, return_option
+							[, flags
+							[, group_number]]]]]
+						)
+					</code></pre>
+
+					<p>The <code>return_option</code> parameter controls whether to return the start (0) or end (1) of the match.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+
+					<ol>
+						<li>What Are Regular Expressions?</li>
+						<li>Regex Fundamentals</li>
+						<li>REGEXP_LIKE</li>
+						<li>REGEXP_COUNT</li>
+						<li>REGEXP_REPLACE</li>
+						<li>REGEXP_SUBSTR</li>
+						<li>REGEXP_INSTR</li>
+						<li class="active">Practical Examples</li>
+					</ol>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>Practical Examples</h3>
+
+					<p>Now let's put it all together with some real-world scenarios:</p>
+					<ul>
+						<li>Data validation (e-mail addresses, phone numbers)</li>
+						<li>Parsing semi-structured log data</li>
+						<li>Data cleansing and standardization pipelines</li>
+						<li>Unicode-aware text processing</li>
+						<li>Extracting structured data from free text</li>
+					</ul>
+				</section>
+
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>Unicode Property Escapes</h3>
+
+					<p>SQL Server 2025 uses the <strong>ICU regex engine</strong>, which supports Unicode property escapes.  This is something <code>LIKE</code> and <code>PATINDEX</code> cannot do.</p>
+					<ul>
+						<li><code>\p{L}</code> -- Any Unicode letter (Latin, Cyrillic, Chinese, Arabic, etc.)</li>
+						<li><code>\p{N}</code> -- Any Unicode number</li>
+						<li><code>\p{Sc}</code> -- Any currency symbol ($, &euro;, &pound;, &yen;)</li>
+						<li><code>\p{P}</code> -- Any punctuation character</li>
+					</ul>
+
+					<p>Essential for working with multilingual or international data.</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+
+				<section data-background-image="presentation/assets/background/wrappingup.jpg" data-background-opacity="0.2">
+					<h3>Wrapping Up</h3>
+
+					<p>SQL Server 2025 brings long-awaited regular expression support to the T-SQL language.  The five new functions -- <code>REGEXP_LIKE</code>, <code>REGEXP_COUNT</code>, <code>REGEXP_REPLACE</code>, <code>REGEXP_SUBSTR</code>, and <code>REGEXP_INSTR</code> -- give database developers powerful text processing capabilities without leaving T-SQL.</p>
+
+					<p>Key takeaways:</p>
+					<ul>
+						<li>SQL Server 2025 uses the <strong>ICU regex engine</strong> with Unicode property support</li>
+						<li>Watch out for <strong>greedy vs. lazy</strong> quantifier behavior</li>
+						<li>Use <strong>lookaheads/lookbehinds</strong> for context-sensitive matching</li>
+						<li>Use <strong><code>\p{...}</code></strong> for Unicode-aware international data</li>
+					</ul>
+				</section>
+
+				<section data-background-image="presentation/assets/background/wrappingup.jpg" data-background-opacity="0.2">
+					<h3>Performance Considerations</h3>
+
+					<p>Regular expressions are powerful but come with caveats:</p>
+					<ul>
+						<li>Regex functions in a <code>WHERE</code> clause <strong>cannot use indexes</strong> -- they require a full scan, just like <code>LIKE '%pattern%'</code></li>
+						<li>For simple prefix matching, <code>LIKE 'prefix%'</code> is still faster and can use indexes</li>
+						<li>Filter with indexed columns first, then apply regex for validation or extraction</li>
+						<li>Complex patterns with excessive backtracking can be slow on large strings</li>
+					</ul>
+				</section>
+
+				<section data-background-image="presentation/assets/background/wrappingup.jpg" data-background-opacity="0.2">
+					<h3>Wrapping Up</h3>
+
+					<p>
+						To learn more, go here:
+						<br />
+						<a href="https://csmore.info/on/regex">https://csmore.info/on/regex</a>
+					</p>
+					<br />
+					<p>
+						Test and debug your regex patterns:
+						<br />
+						<a href="https://regex101.com">https://regex101.com</a>
+					</p>
+					<br />
+					<p>
+						And for help, contact me:
+						<br />
+						<a href="mailto:feasel@catallaxyservices.com">feasel@catallaxyservices.com</a> | <a href="https://www.twitter.com/feaselkl">@feaselkl</a>
+					</p>
+					<br />
+					<p>
+						Catallaxy Services consulting:
+						<br />
+						<a href="https://csmore.info/contact">https://CSmore.info/on/contact</a>
+					</p>
+				</section>
+			</div>
+		</div>
+
+		<script src="../reveal.js/dist/reveal.js"></script>
+		<script src="../reveal.js/plugin/zoom/zoom.js"></script>
+		<script src="../reveal.js/plugin/notes/notes.js"></script>
+		<script src="../reveal.js/plugin/search/search.js"></script>
+		<script src="../reveal.js/plugin/markdown/markdown.js"></script>
+		<script src="../reveal.js/plugin/math/math.js"></script>
+		<script src="../reveal.js/plugin/menu/menu.js"></script>
+		<script src="../reveal.js/plugin/highlight/highlight.js"></script>
+		<script src="../reveal.js/plugin/chart/Chart.min.js"></script>
+		<script src="../reveal.js/plugin/chart/plugin.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				width: '70%',
+				controls: true,
+				progress: true,
+				center: true,
+				hash: true,
+				transition: 'fade',
+
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealMenu, RevealChart ]
+			});
+		</script>
+	</body>
+</html>

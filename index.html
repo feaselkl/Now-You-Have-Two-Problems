@@ -86,7 +86,7 @@
 				</section>
 
 				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
-					<h3>The Famous Quote</h3>
+					<h3>The Famous Quotation</h3>
 
 					<p><em>"Some people, when confronted with a problem, think 'I know, I'll use regular expressions.' Now they have two problems."</em></p>
 
@@ -106,7 +106,7 @@
 
 					<p>Regular expressions give us much more control over pattern matching, including character classes, quantifiers, alternation, grouping, anchors, and more.</p>
 
-					<p>Use <code>LIKE</code> when simple prefix/suffix/contains matching is enough -- it can use indexes and is faster for simple patterns.  Use regex when you need character classes, quantifiers, alternation, or complex pattern logic.</p>
+					<p>Use <code>LIKE</code> when simple prefix/suffix/contains matching is enough. It can use indexes and is faster for simple patterns.  Use regex when you need character classes, quantifiers, alternation, or complex pattern logic.</p>
 				</section>
 
 				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
@@ -501,7 +501,7 @@
 				<section data-background-image="presentation/assets/background/wrappingup.jpg" data-background-opacity="0.2">
 					<h3>Wrapping Up</h3>
 
-					<p>SQL Server 2025 brings long-awaited regular expression support to the T-SQL language.  The five new functions -- <code>REGEXP_LIKE</code>, <code>REGEXP_COUNT</code>, <code>REGEXP_REPLACE</code>, <code>REGEXP_SUBSTR</code>, and <code>REGEXP_INSTR</code> -- give database developers powerful text processing capabilities without leaving T-SQL.</p>
+					<p>SQL Server 2025 brings long-awaited regular expression support to the T-SQL language.  The five new functions give database developers powerful text processing capabilities without leaving T-SQL.</p>
 
 					<p>Key takeaways:</p>
 					<ul>
@@ -517,7 +517,7 @@
 
 					<p>Regular expressions are powerful but come with caveats:</p>
 					<ul>
-						<li>Regex functions in a <code>WHERE</code> clause <strong>cannot use indexes</strong> -- they require a full scan, just like <code>LIKE '%pattern%'</code></li>
+						<li>Regex functions in a <code>WHERE</code> clause <strong>might not use indexes</strong>. Some require a full scan, just like <code>LIKE '%pattern%'</code></li>
 						<li>For simple prefix matching, <code>LIKE 'prefix%'</code> is still faster and can use indexes</li>
 						<li>Filter with indexed columns first, then apply regex for validation or extraction</li>
 						<li>Complex patterns with excessive backtracking can be slow on large strings</li>
@@ -531,12 +531,6 @@
 						To learn more, go here:
 						<br />
 						<a href="https://csmore.info/on/regex">https://csmore.info/on/regex</a>
-					</p>
-					<br />
-					<p>
-						Test and debug your regex patterns:
-						<br />
-						<a href="https://regex101.com">https://regex101.com</a>
 					</p>
 					<br />
 					<p>

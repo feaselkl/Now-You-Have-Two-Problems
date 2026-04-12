@@ -55,11 +55,13 @@
 				<section data-background-image="presentation/assets/background/motivation.jpg" data-background-opacity="0.2">
 					<h3>Motivation</h3>
 
-					<p>SQL Server has historically had limited pattern matching capabilities, relying on <code>LIKE</code> and <code>PATINDEX()</code> for string matching.</p>
+					<p>SQL Server has historically relied on <code>LIKE</code> and <code>PATINDEX()</code> for pattern matching. That's two wildcards (<code>%</code>, <code>_</code>) and not much else.</p>
 
-					<p>SQL Server 2025 introduces native regular expression support, bringing SQL Server in line with other major database platforms like Oracle, PostgreSQL, and MySQL.</p>
+					<p>SQL Server 2025 introduces native regular expression support.</p>
 
-					<p>Regular expressions unlock powerful text processing capabilities that were previously difficult or impossible in T-SQL alone.</p>
+					<p>Regex adds capabilities to unlock text processing that was previously difficult or impossible in T-SQL alone.</p>
+
+					<p><code>LIKE</code> still wins on simple prefix/suffix matching, so reach for regex when the pattern genuinely needs it.</p>
 				</section>
 
 				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
@@ -86,27 +88,13 @@
 				</section>
 
 				<section data-background-image="presentation/assets/background/books-45degree.jpg" data-background-opacity="0.2">
-					<h3>The Famous Quotation</h3>
+					<h3>The Famous Joke</h3>
 
 					<p><em>"Some people, when confronted with a problem, think 'I know, I'll use regular expressions.' Now they have two problems."</em></p>
 
 					<p>-- Jamie Zawinski</p>
 
 					<p>Let's see if that's still true.</p>
-				</section>
-
-				<section data-background-image="presentation/assets/background/muay-thai.jpg" data-background-opacity="0.2">
-					<h3>LIKE vs Regular Expressions</h3>
-
-					<p><code>LIKE</code> gives us two wildcards:</p>
-					<ul>
-						<li><code>%</code> -- Zero or more characters</li>
-						<li><code>_</code> -- Exactly one character</li>
-					</ul>
-
-					<p>Regular expressions give us much more control over pattern matching, including character classes, quantifiers, alternation, grouping, anchors, and more.</p>
-
-					<p>Use <code>LIKE</code> when simple prefix/suffix/contains matching is enough. It can use indexes and is faster for simple patterns.  Use regex when you need character classes, quantifiers, alternation, or complex pattern logic.</p>
 				</section>
 
 				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
@@ -124,54 +112,10 @@
 					</ol>
 				</section>
 
-				<section data-background-image="presentation/assets/background/sketch.jpg" data-background-opacity="0.2">
-					<h3>Literal Characters</h3>
-
-					<p>The simplest regex pattern is a literal string.</p>
-
-					<p>The pattern <code>cat</code> matches the text "cat" inside a string.  This is equivalent to <code>LIKE '%cat%'</code>.</p>
-
-					<p>Regular expressions are <strong>case-sensitive</strong> by default, though SQL Server's regex functions include a flag to change this.</p>
-				</section>
-
 				<section data-background-image="presentation/assets/background/paper-stack.jpg" data-background-opacity="0.2">
-					<h3>Character Classes</h3>
+					<h3>Regex Cheat Sheet</h3>
 
-					<p>Square brackets define a set of characters to match:</p>
-					<ul>
-						<li><code>[abc]</code> -- Matches a, b, or c</li>
-						<li><code>[a-z]</code> -- Matches any lowercase letter</li>
-						<li><code>[0-9]</code> -- Matches any digit</li>
-						<li><code>[^abc]</code> -- Matches any character <strong>except</strong> a, b, or c</li>
-					</ul>
-				</section>
-
-				<section data-background-image="presentation/assets/background/plan.jpg" data-background-opacity="0.2">
-					<h3>Shorthand Character Classes</h3>
-
-					<ul>
-						<li><code>\d</code> -- Any digit (equivalent to <code>[0-9]</code>)</li>
-						<li><code>\D</code> -- Any non-digit</li>
-						<li><code>\w</code> -- Any word character (letters, digits, underscore)</li>
-						<li><code>\W</code> -- Any non-word character</li>
-						<li><code>\s</code> -- Any whitespace character</li>
-						<li><code>\S</code> -- Any non-whitespace character</li>
-						<li><code>.</code> -- Any character (except newline by default)</li>
-					</ul>
-				</section>
-
-				<section data-background-image="presentation/assets/background/abacus.jpg" data-background-opacity="0.2">
-					<h3>Quantifiers</h3>
-
-					<p>Quantifiers specify how many times a character or group should repeat:</p>
-					<ul>
-						<li><code>*</code> -- Zero or more times</li>
-						<li><code>+</code> -- One or more times</li>
-						<li><code>?</code> -- Zero or one time</li>
-						<li><code>{n}</code> -- Exactly n times</li>
-						<li><code>{n,}</code> -- n or more times</li>
-						<li><code>{n,m}</code> -- Between n and m times</li>
-					</ul>
+					<img src="presentation/assets/image/regex-cheat-sheet.svg" alt="Regex cheat sheet" style="max-height: 75vh; background: none; border: none; box-shadow: none;" />
 				</section>
 
 				<section data-background-image="presentation/assets/background/checklist.jpg" data-background-opacity="0.2">
@@ -187,41 +131,6 @@
 					</ul>
 
 					<p>This is the #1 source of "my regex matches too much!" bugs.</p>
-				</section>
-
-				<section data-background-image="presentation/assets/background/stoplight.jpg" data-background-opacity="0.2">
-					<h3>Anchors and Boundaries</h3>
-
-					<ul>
-						<li><code>^</code> -- Start of string</li>
-						<li><code>$</code> -- End of string</li>
-						<li><code>\b</code> -- Word boundary</li>
-					</ul>
-
-					<p>For example, <code>^[A-Z]</code> matches a string that <strong>starts</strong> with a capital letter, while <code>[0-9]$</code> matches a string that <strong>ends</strong> with a digit.</p>
-				</section>
-
-				<section data-background-image="presentation/assets/background/football.jpg" data-background-opacity="0.2">
-					<h3>Grouping and Alternation</h3>
-
-					<ul>
-						<li><code>(abc)</code> -- Captures the group "abc"</li>
-						<li><code>(?:abc)</code> -- Groups without capturing (non-capturing group)</li>
-						<li><code>a|b</code> -- Matches a or b (alternation)</li>
-						<li><code>(cat|dog)</code> -- Matches "cat" or "dog"</li>
-					</ul>
-
-					<p>Captured groups can be referenced in replacement patterns using <code>\1</code>, <code>\2</code>, etc.  Use <code>(?:...)</code> when you need grouping but don't need to capture.</p>
-				</section>
-
-				<section data-background-image="presentation/assets/background/spiral-staircase.jpg" data-background-opacity="0.2">
-					<h3>Escaping Special Characters</h3>
-
-					<p>If you want to match a character that has special meaning in regex, escape it with a backslash:</p>
-
-					<p><code>\.</code> matches a literal period, <code>\*</code> matches a literal asterisk, <code>\\</code> matches a literal backslash.</p>
-
-					<p>Special characters that need escaping: <code>. * + ? ^ $ { } [ ] ( ) | \</code></p>
 				</section>
 
 				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
@@ -348,27 +257,13 @@
 				<section data-background-image="presentation/assets/background/arrow.jpg" data-background-opacity="0.2">
 					<h3>Backreferences in Replacement</h3>
 
-					<p>Use captured groups in your replacement string:</p>
+					<p>Use capture groups in your replacement string:</p>
 					<ul>
-						<li><code>\1</code>, <code>\2</code>, etc. refer to captured groups</li>
+						<li><code>\1</code>, <code>\2</code>, etc. refer to capture groups</li>
 						<li>Allows you to rearrange, reformat, or selectively keep parts of the matched text</li>
 					</ul>
 
 					<p>For example, <code>(\d{3})-(\d{4})</code> with replacement <code>\2-\1</code> swaps the two groups.</p>
-				</section>
-
-				<section data-background-image="presentation/assets/background/reading-a-book.jpg" data-background-opacity="0.2">
-					<h3>Lookaheads and Lookbehinds</h3>
-
-					<p>These check for patterns <strong>without consuming</strong> them:</p>
-					<ul>
-						<li><code>(?=...)</code> -- Positive lookahead: what follows must match</li>
-						<li><code>(?!...)</code> -- Negative lookahead: what follows must NOT match</li>
-						<li><code>(?&lt;=...)</code> -- Positive lookbehind: what precedes must match</li>
-						<li><code>(?&lt;!...)</code> -- Negative lookbehind: what precedes must NOT match</li>
-					</ul>
-
-					<p>We will demo the positive versions today.  Useful for redacting data, conditional replacements, and context-sensitive matching.</p>
 				</section>
 
 				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
@@ -506,7 +401,6 @@
 						<li>Regex functions in a <code>WHERE</code> clause <strong>might not use indexes</strong>. Some require a full scan, just like <code>LIKE '%pattern%'</code></li>
 						<li>For simple prefix matching, <code>LIKE 'prefix%'</code> is still faster and can use indexes</li>
 						<li>Filter with indexed columns first, then apply regex for validation or extraction</li>
-						<li>Complex patterns with excessive backtracking can be slow on large strings</li>
 					</ul>
 				</section>
 
@@ -529,7 +423,6 @@
 					<ul>
 						<li>SQL Server 2025 uses the <strong>ICU regex engine</strong> with Unicode property support</li>
 						<li>Watch out for <strong>greedy vs. lazy</strong> quantifier behavior</li>
-						<li>Use <strong>lookaheads/lookbehinds</strong> for context-sensitive matching</li>
 						<li>Use <strong><code>\p{...}</code></strong> for Unicode-aware international data</li>
 					</ul>
 				</section>

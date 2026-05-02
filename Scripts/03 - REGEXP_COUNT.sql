@@ -8,7 +8,7 @@ SELECT
 
 -- Count the number of words (sequences of word characters).
 SELECT
-    REGEXP_COUNT('The quick brown fox jumps over the lazy dog', '\b\w+\b') AS WordCount;
+    REGEXP_COUNT('The quick brown fox jumps over the lazy dog.', '\b\w+\b') AS WordCount;
 GO
 
 

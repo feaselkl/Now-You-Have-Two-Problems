@@ -66,7 +66,7 @@ GO
 
 
 
-/* Demo 5:  CamelCase to snake_case conversion */
+/* Demo 5:  PascalCase to snake_case conversion */
 -- Insert an underscore between a lowercase letter and an uppercase letter.
 -- Backreferences \1 and \2 preserve the original letters.
 SELECT

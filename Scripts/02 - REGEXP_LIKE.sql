@@ -22,7 +22,7 @@ SELECT
     c.companyname
 FROM Sales.Customers c
 WHERE
-    c.companyname LIKE '%[0-9]%'
+    c.companyname LIKE '%[G-K]%'
 ORDER BY
     c.companyname;
 

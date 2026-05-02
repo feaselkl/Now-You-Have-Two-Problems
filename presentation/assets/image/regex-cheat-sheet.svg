@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 700" font-family="Helvetica, Arial, sans-serif">
+	<style>
+		.header { font-size: 34px; font-weight: bold; fill: #f0c674; }
+		.code { font-family: 'Courier New', Courier, monospace; font-size: 28px; fill: #ffffff; }
+		.desc { font-size: 28px; fill: #cccccc; }
+		.hint { font-size: 22px; fill: #888888; font-weight: normal; }
+		.footer { font-size: 24px; fill: #aaaaaa; font-style: italic; }
+		.divider { stroke: #444444; stroke-width: 2; }
+	</style>
+
+	<!-- Left column: Character classes -->
+	<text x="50" y="50" class="header">Character classes</text>
+	<text x="70" y="100" class="code">[abc]</text>
+	<text x="330" y="100" class="desc">a, b, or c</text>
+	<text x="70" y="138" class="code">[a-z], [0-9]</text>
+	<text x="330" y="138" class="desc">ranges</text>
+	<text x="70" y="176" class="code">[^abc]</text>
+	<text x="330" y="176" class="desc">anything except a, b, c</text>
+
+	<!-- Left column: Shorthand -->
+	<text x="50" y="245" class="header">Shorthand <tspan class="hint">(capital = negation)</tspan></text>
+	<text x="70" y="295" class="code">\d</text>
+	<text x="330" y="295" class="desc">digit</text>
+	<text x="70" y="333" class="code">\w</text>
+	<text x="330" y="333" class="desc">word character</text>
+	<text x="70" y="371" class="code">\s</text>
+	<text x="330" y="371" class="desc">whitespace</text>
+	<text x="70" y="409" class="code">.</text>
+	<text x="330" y="409" class="desc">any char (except newline)</text>
+
+	<!-- Left column: Anchors -->
+	<text x="50" y="478" class="header">Anchors</text>
+	<text x="70" y="528" class="code">^</text>
+	<text x="330" y="528" class="desc">start of string</text>
+	<text x="70" y="566" class="code">$</text>
+	<text x="330" y="566" class="desc">end of string</text>
+	<text x="70" y="604" class="code">\b</text>
+	<text x="330" y="604" class="desc">word boundary</text>
+
+	<!-- Divider -->
+	<line x1="700" y1="20" x2="700" y2="620" class="divider" />
+
+	<!-- Right column: Quantifiers -->
+	<text x="750" y="50" class="header">Quantifiers</text>
+	<text x="770" y="100" class="code">*</text>
+	<text x="1060" y="100" class="desc">zero or more</text>
+	<text x="770" y="138" class="code">+</text>
+	<text x="1060" y="138" class="desc">one or more</text>
+	<text x="770" y="176" class="code">?</text>
+	<text x="1060" y="176" class="desc">zero or one</text>
+	<text x="770" y="214" class="code">{n}, {n,}, {n,m}</text>
+	<text x="1060" y="214" class="desc">exact counts</text>
+
+	<!-- Right column: Groups and alternation -->
+	<text x="750" y="283" class="header">Groups and alternation</text>
+	<text x="770" y="333" class="code">(abc)</text>
+	<text x="1060" y="333" class="desc">capture group</text>
+	<text x="770" y="371" class="code">(?:abc)</text>
+	<text x="1060" y="371" class="desc">non-capturing</text>
+	<text x="770" y="409" class="code">a|b</text>
+	<text x="1060" y="409" class="desc">alternation</text>
+	<text x="770" y="447" class="code">\1, \2</text>
+	<text x="1060" y="447" class="desc">backreference</text>
+
+	<!-- Right column: Escaping -->
+	<text x="750" y="516" class="header">Escaping</text>
+	<text x="770" y="566" class="code">\. \* \+ \? \( \)</text>
+	<text x="1060" y="566" class="desc">backslash literals</text>
+
+	<!-- Footer -->
+	<text x="700" y="670" class="footer" text-anchor="middle">Regex is case-sensitive by default -- flags can change this</text>
+</svg>
